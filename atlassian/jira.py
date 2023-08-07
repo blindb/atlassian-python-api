@@ -1507,6 +1507,7 @@ class Jira(AtlassianRestAPI):
         title,
         global_id=None,
         relationship=None,
+        application=None,
         icon_url=None,
         icon_title=None,
     ):
@@ -1517,12 +1518,18 @@ class Jira(AtlassianRestAPI):
         :param title: str
         :param global_id: str, OPTIONAL:
         :param relationship: str, OPTIONAL: Default by built-in method: 'Web Link'
+        :param application: dict, OPTIONAL: for Links between trusted Atlassian products, more info becomes visible about remote item in issue view   
+            - { "type" : "com.atlassian.jira" , "name": "any name visible in history tab" } 
+            - for Wiki "type":"com.atlassian.confluence"
+            - missing name generates name "Web Link" in Jira history
         :param icon_url: str, OPTIONAL: Link to a 16x16 icon representing the type of the object in the remote system
         :param icon_title: str, OPTIONAL: Text for the tooltip of the main icon describing the type of the object in the remote system
         """
         base_url = self.resource_url("issue")
         url = "{base_url}/{issue_key}/remotelink".format(base_url=base_url, issue_key=issue_key)
         data = {"object": {"url": link_url, "title": title}}
+        if application:
+            data["application"] = application
         if global_id:
             data["globalId"] = global_id
         if relationship:
